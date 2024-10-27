@@ -38,5 +38,10 @@ git commit -a  ## add only traced files and commit
 
 
 git push
+# add remote repository with ssh key
+git remote add <repository> <url/ssh>
+git remote add automation  git@github.com:chand9948/automation.git
 
+git pull <repository> <main/branch> 
+git pull automation main
 
