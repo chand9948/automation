@@ -1,0 +1,42 @@
+## GIT installation
+
+# on ubuntu machine
+
+ apt-get install git
+
+# Mac
+brew link git
+
+# Centos / OEL
+
+dnf install git-all
+
+# configure the git user
+
+git config user.name <username>
+git config user.email <email>
+
+git config --list
+
+# configure/create/setup the repository.
+-> Go to the desired directory and initialize the empty git repository.
+git init 
+
+git commit 
+
+git status
+git add <filename>
+git add .
+
+git commit
+
+git log 
+
+git log --author="email"
+
+git commit -a  ## add only traced files and commit
+
+
+git push
+
+
