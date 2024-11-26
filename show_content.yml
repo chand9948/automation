@@ -1,0 +1,23 @@
+---
+- name: Display hosts file and server group information
+  hosts: all   # Replace 'all' with your specific host group
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Display hosts file content
+      command: cat /etc/hosts
+      register: hosts_file_content
+
+    - name: Show hosts file content
+      debug:
+        var: hosts_file_content.stdout
+
+    - name: Display server group information
+      setup:
+      register: server_info
+
+    - name: Show server group information
+      debug:
+        var: server_info
+

@@ -1,0 +1,14 @@
+---
+- name: Create 100 Linux users with UIDs starting from 5000
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create users
+      ansible.builtin.user:
+        name: "user{{ user_id }}"
+        uid: "{{ 5000 + user_id }}"
+        state: present
+      loop: "{{ range(1, 10) | list }}"
+      loop_control:
+        loop_var: user_id
+

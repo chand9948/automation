@@ -1,0 +1,12 @@
+---
+- name: Unix/Linux Server Decommission Playbook
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install sos package
+      package:
+        name: sos
+        state: present
+
+    - name: Run sosreport to collect the system diagnostic logs
+      command: sosreport    

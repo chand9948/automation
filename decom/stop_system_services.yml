@@ -1,0 +1,17 @@
+---
+ - name: Stop non-root user services
+   hosts: remote
+   tasks:
+     - name: Get list of services
+       command: systemctl list-units --type=service --state=running
+       register: running_services
+
+     - name: Stop non-root user services
+       shell: |
+         for service in {{ running_services.stdout_lines }}; do
+           if ! systemctl show -p User $service | grep -q 'User=root'; then
+                systemctl stop $service
+                #   echo " " $service 
+           fi
+         done
+       when: running_services.stdout_lines is defined

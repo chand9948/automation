@@ -1,0 +1,15 @@
+---
+- name: Master playbook to run nested playbooks
+  hosts: servers
+  gather_facts: no  # Disable fact gathering at the master level if not needed
+  become: yes
+
+  tasks:
+    - name: Include Webserver Playbook
+      include_tasks: webserver_playbook.yml
+      ignore_errors: yes  
+
+    - name: Include Database Server Playbook
+      include_tasks: dbserver_playbook.yml
+      ignore_errors: yes  
+

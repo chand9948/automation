@@ -1,0 +1,15 @@
+---
+ - name: shutdown_server.yml
+   hosts:  remote
+   become: yes
+   tasks: 
+     - name: Notify user about the upcoming command 
+       debug: 
+         msg: "The server requested for Shutdown the server, Please confirm to proceed." 
+
+     - name: Shutdown Yes/No ?  
+       pause: 
+         prompt: "Press Enter to continue, or Ctrl+C to cancel."
+
+     - name: Shutdown server
+       command: /usr/sbin/shutdown -h now 

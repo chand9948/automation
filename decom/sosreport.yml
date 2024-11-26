@@ -1,0 +1,14 @@
+---
+ - name: sosreport yaml file
+   hosts: "{{ remote }}"
+   gather_facts: yes  
+   become: yes  
+   vars:
+     ansible_python_interpreter: /usr/bin/python3
+   vars_files:
+     - hosts_vars.yml
+
+   tasks:
+     - name: Run sos report
+       command: sosreport --batch --case-id decommission_logs
+       ignore_errors: yes

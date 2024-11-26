@@ -1,0 +1,55 @@
+---
+- name: Playbook with pause for user confirmation
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Display decommission message
+      debug:
+        msg: |
+          === Server Decommission Script ===
+          Please ensure you have backed up all necessary data before proceeding.
+          This script will stop services, remove user accounts, and delete log files.
+          Are you sure you want to continue? (Press ENTER to continue, or CTRL-C to quit)
+
+    - name: Pause for user confirmation
+      pause:
+        prompt: "Press ENTER to continue, or CTRL-C to quit"
+
+    - name: Run sos report
+      command: sos report
+
+    - name: Force log rotation
+      command: logrotate -f /etc/logrotate.conf
+
+    - name: Stop services
+      service:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - SplunkForwarder.service
+        - httpd.service
+        - qualys-cloud-agent.service
+        - ds_agent.service
+        - opsramp-agent.service
+
+    - name: Remove users with UID above 1000
+      user:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ lookup('pipe', 'awk -F: \'{ if ($3 > 1000) print $1 }\' /etc/passwd') | splitlines }}"
+
+    - name: Remove groups with GID above 1000
+      group:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ lookup('pipe', 'awk -F: \'{ if ($3 > 1000) print $1 }\' /etc/group') | splitlines }}"
+
+    - name: Delete log files
+      file:
+        path: /var/log/
+        state: absent
+        recurse: yes
+
+    - name: Shutdown server
+      command: shutdown -h now
+

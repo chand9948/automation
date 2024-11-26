@@ -1,0 +1,28 @@
+---
+ - name: Unix/Linux Server Decommission Playbook
+   hosts: "{{ remote }}"
+   #hosts: "{{ decom_servers }}"
+   gather_facts: yes
+   become: yes
+   vars:
+     ansible_python_interpreter: /usr/bin/python3
+   vars_files:
+     - hosts_vars.yml
+   tasks:
+     - name: Run SOS report
+       include_tasks: sosreport.yml
+       ignore_errors: yes
+     - name: Run log rotation
+       include_tasks: logrotate.yml
+     - name: Stop application services
+       include_tasks: Stop_app_service.yml
+     - name: Remove Users (uid > 1000)
+       include_tasks: remove_users.yml
+     - name: stopping system services
+       include_tasks: stop_system_services_legacy.yml
+     - name: stopping system services
+       include_tasks: stop_system_services.yml
+     - name: Find and delete all files in /var/log
+       include_tasks: delete_logs.yml
+     - name: Shutdown server
+       include_tasks: shutdown_server.yml

@@ -1,0 +1,12 @@
+# master_playbook.yml
+---
+ - name: Master playbook
+   hosts: all
+   vars:
+     ansible_python_interpreter: /usr/bin/python3  
+   tasks:
+     - name: Run gather_info playbook
+       include_tasks: gather_info.yml
+
+     - name: Run use_info playbook
+       include_tasks: use_info.yml

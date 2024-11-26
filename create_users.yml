@@ -1,0 +1,12 @@
+---
+- name: Create 100 Linux users with UIDs starting from 5000
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create users
+      user:
+        name: "user{{ item }}"
+        uid: "{{ 5000 + item }}"
+        state: present
+      with_sequence: start=0 end=10
+

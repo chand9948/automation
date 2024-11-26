@@ -1,0 +1,17 @@
+---
+ - name: Stopping Non-root services
+   hosts: remote
+   become: yes
+   tasks:
+     - name: Get list of running services
+       command: service --status-all
+       register: running_services
+
+     - name: Stop non-root user services
+       shell: |
+         for service in $(echo "{{ running_services.stdout }}" | grep running | awk '{print $1}'); do
+          if ! grep -q 'root' /etc/init.d/$service; then
+           service $service stop
+          fi
+         done
+       when: running_services.stdout is defined

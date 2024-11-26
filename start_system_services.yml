@@ -1,0 +1,20 @@
+---
+ - name: Start non-root services
+   hosts: all
+   become: yes
+   tasks:
+     - name: Get list of services
+       command: systemctl list-units --type=service --state=exited
+       register: non_running_services
+       ignore_errors: yes
+       ansible_loop_var: 
+     - name: Start non-root services
+       ansible.builtin.service:
+         name: "{{ item.name }}"
+         state: started
+          #      become_user: "{{ item.user }}"
+       ignore_errors: yes
+       loop:
+        - { name: 'non_running_services.stdout_lines', user: 'root' }
+          #        - { name: 'service2', user: 'service_user2' }
+          #        - { name: 'service3', user: 'service_user3' }

@@ -1,0 +1,12 @@
+---
+ - name: delete_logs.yml
+   hosts: remote
+   become: yes
+
+   tasks: 
+     - name: Find and delete all files in /var/log
+       find:
+         paths: /var/log
+         recurse: yes
+         file_type: file
+       register: log_files

@@ -1,0 +1,13 @@
+---
+    - name: Find and delete all files in /var/log
+      find:
+        paths: /var/log
+        recurse: yes
+        file_type: file
+      register: log_files
+
+    - name: Delete found log files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ log_files.files }}"

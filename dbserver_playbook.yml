@@ -1,0 +1,15 @@
+---
+- name: Configure database servers
+  hosts: dbservers
+  gather_facts: yes
+  tasks:
+    - name: Install MariaDB
+      yum:
+        name: mariadb-server
+        state: present
+
+    - name: Start MariaDB
+      service:
+        name: mariadb
+        state: started
+

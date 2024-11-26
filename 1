@@ -1,0 +1,16 @@
+---
+- name: Playbook with gather_facts and tasks
+  hosts: all   # Replace 'all' with your specific host group
+  gather_facts: yes
+  become: yes
+  vars: 
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Get hostname
+      set_fact:
+        hostname: "{{ inventory_hostname }}"
+
+    - name: Display hostname
+      debug:
+        msg: "Hostname is {{ hostname }}"
+        msg: "remote server is {{ remote }}"  

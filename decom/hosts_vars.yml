@@ -1,0 +1,6 @@
+---
+ decom_servers:
+   - localhost
+
+ remote:
+   - 192.168.231.131

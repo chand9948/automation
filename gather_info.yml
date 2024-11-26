@@ -1,0 +1,11 @@
+# gather_info.yml
+---
+ - name: Gather information from hosts
+   hosts: all
+   gather_facts: yes
+   vars:
+     ansible_python_interpreter: /usr/bin/python3  
+   tasks:
+     - name: Get hostname
+       set_fact:
+         hostname: "{{ inventory_hostname }}"

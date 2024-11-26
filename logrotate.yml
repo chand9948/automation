@@ -1,0 +1,8 @@
+---
+- name: Execute logrotate on remote server
+  hosts: remote
+  become: yes
+  tasks:
+    - name: Run logrotate
+      command: /usr/sbin/logrotate /etc/logrotate.conf
+

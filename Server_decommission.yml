@@ -1,0 +1,77 @@
+---
+- name: Unix/Linux Server Decommission Playbook
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3  
+  tasks:
+
+    #    - name: Display decommission message
+      #debug:
+      # msg: |
+      #    === Server Decommission Script ===
+      #    Please ensure you have backed up all necessary data before proceeding.
+      #    This script will stop services, remove user accounts, and delete log files.
+      #    Are you sure you want to continue? (y/n)
+          #      register: user_input
+
+          #    - name: Abort if user does not confirm
+      #fail:
+      # msg: "Decommission aborted."
+      #when: user_input.msg != 'y'
+
+    - name: Run sos report
+      command: sosreport --batch --case-id decommission_logs
+
+    - name: Force log rotation
+      command: logrotate  /etc/logrotate.conf
+      ignore_errors: yes
+
+    - name: Stop services
+      service:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        #    - SplunkForwarder.service
+        - httpd.service
+        #- qualys-cloud-agent.service
+        #- ds_agent.service
+        #- opsramp-agent.service
+      ignore_errors: yes  
+
+    - name: Get list of users with UID > 1000
+      command: awk -F ":" '$3 > 1000 {print $1}' /etc/passwd
+      register: users_to_remove
+
+    - name: Remove users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: yes
+      loop: "{{ users_to_remove.stdout_lines }}"
+
+    
+    - name: stopping system services
+      import_tasks: stop_system_services_legacy.yml
+      ignore_errors: yes  
+
+    - name: stopping system services
+      include_tasks: stop_system_services.yml
+      ignore_errors: yes
+
+    - name: Find and delete all files in /var/log
+      find:
+        paths: /var/log
+        recurse: yes
+        file_type: file
+      register: log_files
+
+    - name: Delete found log files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ log_files.files }}"
+      ignore_errors: yes  
+
+    - name: Shutdown server
+      command: shutdown -h now

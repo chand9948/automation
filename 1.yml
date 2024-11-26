@@ -1,0 +1,25 @@
+---
+- name: Playbook with pause for user confirmation
+  hosts: localhost
+  become: yes
+    #  vars: disk_usage  
+  tasks:
+    - name: Display decommission message
+      debug:
+        msg: |
+          === Server Decommission Script ===
+          Please ensure you have backed up all necessary data before proceeding.
+          This script will stop services, remove user accounts, and delete log files.
+          Are you sure you want to continue? (Press ENTER to continue, or CTRL-C to quit)
+
+    - name: Pause for user confirmation
+      pause:
+        prompt: "Press ENTER to continue, or CTRL-C to quit"
+
+    - name: Run sos report
+      command: df -hPT
+      register: disk_usage
+
+    - name: print the disk usage
+      ansible.builtin.set_fact:
+        var: disk_usage.stout

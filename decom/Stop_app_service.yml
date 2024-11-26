@@ -1,0 +1,15 @@
+--- 
+ - name: stop_app_services.yml
+   hosts: remote
+   become: yes
+   tasks: 
+     - name: Stop services
+       service:
+          name: "{{ item }}"
+          state: stopped
+       loop:
+        #    - SplunkForwarder.service
+          - httpd.service
+        #- qualys-cloud-agent.service
+        #- ds_agent.service
+        #- opsramp-agent.service	

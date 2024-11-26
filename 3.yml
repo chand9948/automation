@@ -1,0 +1,18 @@
+---
+# - name: Stop non-root user services
+
+  - name: Get list of services
+    ansible.builtin.command:
+    command: systemctl list-units --type=service --state=running
+    register: running_services
+      echo "running_services.stdout_lines"
+
+      # - name: Stop non-root user services
+    shell: |
+      for service in {{ running_services.stdout_lines }}; do
+           if ! systemctl show -p User $service | grep -q 'User=root'; then
+           # systemctl stop $service
+               echo " " $service
+           fi
+         done
+       when: running_services.stdout_lines is defined

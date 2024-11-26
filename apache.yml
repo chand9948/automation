@@ -1,0 +1,17 @@
+---
+- name: Install Apache on Oracle Linux 9
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Apache is installed
+      #      ansible.builtin.yum:
+      #      name: httpd
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Ensure Apache is started and enabled
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
