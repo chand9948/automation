@@ -1,0 +1,13 @@
+# use_info.yml
+---
+ - name: Use information from gather_info playbook
+   #hosts: all
+   vars:
+     ansible_python_interpreter: /usr/bin/python3  
+   tasks:
+     - name: Import information from gather_info playbook
+       include_tasks: gather_info.yml    
+
+     - name: Display hostname
+       debug:
+         msg: "Hostname is {{ hostname }}"

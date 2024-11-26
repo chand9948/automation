@@ -1,0 +1,8 @@
+---
+ - name: Stop non-root user services
+   hosts: Lab_Servers
+   become: yes
+   tasks:
+   - name: Get list of services
+     ansible.builtin.command: /usr/bin/who -r  
+

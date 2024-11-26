@@ -1,0 +1,44 @@
+---
+- name: Decommission Linux Server
+  hosts: all
+  become: yes
+  tasks:
+    - name: Notify stakeholders
+      mail:
+        host: 192.168.231.132
+        port: 25
+        to: "chand.pathan@hitachids.com"
+        subject: "Decommissioning Server {{ inventory_hostname }}"
+        body: "The server {{ inventory_hostname }} is scheduled for decommissioning."
+
+    - name: Verify server function
+      shell: |
+        if pgrep -x "critical_service" > /dev/null
+        then
+          echo "Critical service is running!"
+          exit 1
+        fi
+      register: service_check
+      ignore_errors: yes
+
+    - name: Backup data
+      command: tar czf /backup/{{ inventory_hostname }}.tar.gz /var/log
+      when: service_check.rc == 0
+
+    - name: Disable services
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: no
+      loop:
+        - apache2
+        - mysql
+
+          #    - name: Wipe disks
+      #      shell: |
+        #        dd if=/dev/zero of=/dev/sda bs=1M
+        #        dd if=/dev/zero of=/dev/sdb bs=1M
+
+        #    - name: Shutdown server
+      #      command: shutdown now
+

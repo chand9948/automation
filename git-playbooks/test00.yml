@@ -1,0 +1,4 @@
+---
+- name: inheriting host variable from test0.yml
+  hosts: all
+  getfacts_host  

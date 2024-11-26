@@ -1,0 +1,20 @@
+---
+- name: Patch remote CentOS/RHEL servers
+  hosts: decom_servers   # Replace 'all' with your specific host group
+  become: yes   # Ensures the tasks are run as a superuser
+  vars: 
+    ansible_python_interpreter: /usr/bin/python3    
+  tasks:
+    - name: Update all packages to the latest version
+      dnf:
+        name: '*'
+        state: latest
+
+    - name: Reboot the server if a kernel update was installed
+      shell: "needs-restarting -r; echo $?"
+      register: reboot_required
+      ignore_errors: yes
+
+    - name: Reboot the server
+      reboot:
+      when: reboot_required.stdout == "0"

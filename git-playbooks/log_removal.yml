@@ -1,0 +1,10 @@
+---
+- name: Delete /var/log files recursively
+  hosts: all
+  become: yes
+  tasks:
+    - name: Recursively delete /var/log files
+      file:
+        path: /var/log
+        state: absent
+        recurse: yes

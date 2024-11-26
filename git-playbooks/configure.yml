@@ -1,0 +1,28 @@
+---
+- name: Create 10x Linux users with UIDs starting from 5000
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create users
+      ansible.builtin.user:
+        name: "user{{ user_id }}"
+        uid: "{{ 5000 + user_id }}"
+        state: present
+      loop: "{{ range(1, 10) | list }}"
+      loop_control:
+        loop_var: user_id
+
+    - name: Ensure Apache is installed
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+
+    - name: Ensure Apache is started and enabled
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Calling another pansible-laybook
+      include_tasks: log_removal_v2.yml
+

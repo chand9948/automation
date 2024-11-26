@@ -1,0 +1,15 @@
+---
+- name: Playbook with pause for user confirmation
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Get list of users with UID > 1000
+      command: /usr/bin/awk -F: '$3 > 1000 {print $1}' /etc/passwd
+      register: users_to_remove
+
+    - name: Remove users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: yes
+      loop: "{{ users_to_remove.stdout_lines }}"
